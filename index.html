@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1524">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="لوح">
+<title>لوح — گنجورِ یادداشت‌ها</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mirza:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1524; --card:#15203a; --card2:#18264a;
+  --gold:#d9b45b; --gold2:#b98f2f; --line:#2a3a5e;
+  --ink:#e8e2d0; --dim:#9aa7c4; --red:#c0564f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;min-height:100vh;
+  background:radial-gradient(1200px 500px at 50% -10%,#1a2a52 0%,transparent 60%),
+  radial-gradient(800px 400px at 90% 110%,#2a1c30 0%,transparent 55%),var(--bg)}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 110px}
+header.app{display:flex;align-items:center;gap:12px;padding:18px 2px 6px}
+h1{font-family:Mirza;font-size:30px;margin:0;color:var(--gold)}
+.sub{color:var(--dim);font-size:12.5px}
+.gear{background:none;border:0;font-size:21px;cursor:pointer;padding:6px;margin-inline-start:auto}
+.date{text-align:center;color:var(--dim);font-size:12px;line-height:1.6}
+.divider{display:flex;align-items:center;gap:10px;margin:10px 0 14px;color:var(--gold2);font-size:10px;letter-spacing:4px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line))}
+.greet{font-family:Mirza;font-size:21px;margin:8px 2px 2px}
+#count{margin:0 2px 14px;font-size:12.5px}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin-bottom:12px}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--ink);font-family:inherit;font-size:15px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:99px;padding:6px 14px;font-family:inherit;font-size:13px;cursor:pointer}
+.chip.on{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#20180a;font-weight:700;border-color:transparent}
+.sec{font-family:Mirza;color:var(--gold);font-size:17px;margin:14px 4px 8px}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:14px;padding:13px 15px;cursor:pointer;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),transparent)}
+.card.pinned{border-color:var(--gold2);box-shadow:0 0 0 1px rgba(217,180,91,.25)}
+.ct{font-weight:700;font-size:15.5px;display:flex;gap:6px;align-items:center}
+.star{color:var(--gold)}
+.cs{color:var(--dim);font-size:13px;margin-top:5px;line-height:1.8}
+.pg{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:10px}
+.pg i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+.cf{display:flex;justify-content:space-between;align-items:center;margin-top:9px}
+.tag{font-size:11px;border:1px solid;border-radius:99px;padding:2px 9px}
+.dt{color:var(--dim);font-size:11px}
+.fab{position:fixed;inset-inline-end:20px;bottom:24px;width:58px;height:58px;border-radius:18px;border:0;
+  background:linear-gradient(180deg,var(--gold),var(--gold2));color:#241b07;font-size:30px;font-weight:700;font-family:Mirza;
+  box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 4px rgba(217,180,91,.15);cursor:pointer;z-index:40}
+.fab:active{transform:scale(.94)}
+#editor{position:fixed;inset:0;background:var(--bg);z-index:50;transform:translateY(100%);transition:.28s;display:flex;flex-direction:column}
+#editor.open{transform:none}
+.ebar{display:flex;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.ebar button{background:none;border:0;color:var(--ink);font-size:20px;cursor:pointer;padding:8px 12px;border-radius:10px}
+.ebar button:active{background:var(--card)}
+#epin.on{color:var(--gold)}
+.espace{flex:1}
+#et{width:100%;background:none;border:0;outline:0;color:var(--gold);font-family:Mirza;font-size:26px;padding:16px 18px 4px}
+.esel{margin:4px 18px}
+select{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-family:inherit;font-size:13px}
+.etabs{display:flex;gap:8px;margin:6px 18px 0}
+.etabs button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:10px;padding:8px;font-family:inherit;font-size:13px;cursor:pointer}
+.etabs button.on{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#241b07;font-weight:700;border-color:transparent}
+#eb{flex:1;width:100%;background:none;border:0;outline:0;color:var(--ink);font-family:Vazirmatn;font-size:16px;line-height:2;padding:12px 18px 20px;resize:none;min-height:0}
+#items{flex:1;overflow:auto;display:none;padding-top:6px}
+.irow{display:flex;gap:8px;align-items:center;padding:6px 18px}
+.ick{width:26px;height:26px;flex:0 0 26px;border-radius:8px;border:1.5px solid var(--gold2);background:none;color:var(--gold);font-size:15px;cursor:pointer}
+.ick.on{background:var(--gold);color:#241b07}
+.irow input{flex:1;background:none;border:0;outline:0;border-bottom:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:15px;padding:8px 2px}
+.irow input::placeholder{color:var(--dim)}
+.idx{background:none;border:0;color:var(--dim);font-size:15px;cursor:pointer;padding:6px}
+#addIt{display:none;margin:10px 18px 0;background:none;border:1px dashed var(--gold2);color:var(--gold);border-radius:10px;padding:8px 16px;font-family:inherit;font-size:13.5px;cursor:pointer}
+#modal,#set{position:fixed;inset:0;background:rgba(5,9,18,.72);z-index:60;display:none;align-items:center;justify-content:center;padding:24px}
+#modal.open,#set.open{display:flex}
+.mbox{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:22px;max-width:340px;width:100%;text-align:center;max-height:86vh;overflow:auto}
+.mbox p{font-family:Mirza;font-size:19px;margin:0 0 18px}
+.mrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.mrow button{border-radius:10px;padding:9px 22px;font-family:inherit;font-size:14px;cursor:pointer}
+.btn-yes{background:var(--red);color:#fff;border:0}
+.btn-no{background:none;color:var(--dim);border:1px solid var(--line)}
+.btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold2));border:0;color:#241b07;border-radius:10px;padding:9px 18px;font-family:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.sttl{font-family:Mirza;font-size:22px;color:var(--gold);margin:0 0 4px}
+.sttl2{font-family:Mirza;color:var(--gold);font-size:16px;margin:14px 0 8px;text-align:right}
+.hr{height:1px;background:var(--line);margin:8px 0 0}
+.note2{color:var(--dim);font-size:11.5px;line-height:1.9;margin-top:8px;text-align:right}
+.okline{color:var(--dim);font-size:13.5px;margin-bottom:10px}
+.ver{color:var(--dim);font-size:11px;margin-top:12px}
+.pinIn{background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--gold);font-family:inherit;font-size:20px;letter-spacing:10px;text-align:center;padding:10px;width:160px;outline:0}
+#lock{position:fixed;inset:0;background:var(--bg);z-index:80;display:none;align-items:center;justify-content:center;padding:24px}
+.lmark{font-size:40px}
+.ltitle{font-family:Mirza;font-size:23px;color:var(--gold);margin:8px 0 16px}
+.shake{animation:shk .35s}
+@keyframes shk{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+#toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--gold2);color:var(--gold);padding:9px 20px;border-radius:99px;font-size:13px;opacity:0;transition:.25s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%)}
+.empty{text-align:center;padding:46px 20px;color:var(--dim)}
+.empty svg{opacity:.65;margin-bottom:12px}
+.empty b{display:block;font-family:Mirza;font-size:22px;color:var(--gold);margin-bottom:6px}
+.es2{font-size:13px}
+@media(min-width:680px){.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <svg width="52" height="30" viewBox="0 0 120 60" fill="none" stroke="#d9b45b" stroke-width="3.5" stroke-linecap="round">
+      <circle cx="60" cy="22" r="12"/><circle cx="60" cy="22" r="5" fill="#d9b45b" stroke="none"/>
+      <path d="M46 20 C34 10 20 10 8 18 C22 16 34 20 45 26"/>
+      <path d="M74 20 C86 10 100 10 112 18 C98 16 86 20 75 26"/>
+      <path d="M60 34 L60 52"/><path d="M50 34 L44 50"/><path d="M70 34 L76 50"/>
+    </svg>
+    <div><h1>لوح</h1><div class="sub">گنجورِ یادداشت‌های تو</div></div>
+    <button class="gear" onclick="openSet()" title="دژِ گنجینه">⚙️</button>
+    <div class="date" id="date"></div>
+  </header>
+  <div class="divider">◆ ◆ ◆</div>
+  <div class="greet" id="greet"></div>
+  <div class="sub" id="count"></div>
+  <div class="search">
+    <span style="color:var(--dim)">🔎</span>
+    <input id="q" placeholder="در گنجینه بگرد…" oninput="Q=this.value.trim();render()">
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="list"></div>
+</div>
+
+<button class="fab" onclick="openEditor(null)" title="لوحی بنگار">+</button>
+
+<div id="editor">
+  <div class="ebar">
+    <button onclick="closeEditor()">→</button>
+    <div class="espace"></div>
+    <button id="epin" onclick="togglePin()">★</button>
+    <button onclick="askDel()">🗑</button>
+  </div>
+  <input id="et" placeholder="نامِ لوح…" oninput="edInput()">
+  <div class="esel"><select id="ec" onchange="edInput()"></select></div>
+  <div class="etabs">
+    <button id="tabT" onclick="setType('text')">✍ نوشتار</button>
+    <button id="tabL" onclick="setType('list')">☑ سیاهه</button>
+  </div>
+  <textarea id="eb" placeholder="آنجا که قلم می‌چرخد، بنویس…" oninput="edInput()"></textarea>
+  <div id="items"></div>
+  <button id="addIt" onclick="addItem()">＋ بنچکِ تازه</button>
+</div>
+
+<div id="modal"><div class="mbox">
+  <p>آیا از سپردنِ این لوح به باد مطمئنی؟</p>
+  <div class="mrow">
+    <button class="btn-yes" onclick="doDel()">آری</button>
+    <button class="btn-no" onclick="document.getElementById('modal').classList.remove('open')">نه، ماندنی است</button>
+  </div>
+</div></div>
+
+<div id="set"><div class="mbox" style="max-width:360px">
+  <div class="sttl">⚙ دژِ گنجینه</div>
+  <div class="sttl2">قفلِ رمز</div>
+  <div id="pinArea"></div>
+  <div class="hr"></div>
+  <div class="sttl2">پشتیبانِ گنجینه</div>
+  <div class="mrow" style="justify-content:center">
+    <button class="btn-gold" onclick="doExport()">⬇ برون‌سپاری</button>
+    <label class="btn-gold">⬆ درون‌ریزی<input type="file" accept=".json,application/json" hidden onchange="doImport(this)"></label>
+  </div>
+  <div class="note2">پشتیبان را جای امن نگه دار؛ اگر داده‌های مرورگر پاک شود، تنها راهِ بازآوری همین است.</div>
+  <div class="mrow" style="margin-top:16px"><button class="btn-no" onclick="document.getElementById('set').classList.remove('open')">بستن</button></div>
+  <div class="ver">لوح — نگارش ۲</div>
+</div></div>
+
+<div id="lock"><div class="mbox">
+  <div class="lmark">🗝</div>
+  <div class="ltitle">گنجینه به قفل است</div>
+  <input id="pinIn" class="pinIn" type="password" inputmode="numeric" placeholder="کلید را بنشان" onkeydown="if(event.key==='Enter')tryPin()">
+  <div><button class="btn-yes" style="margin-top:16px" onclick="tryPin()">بگشای</button></div>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+const CATS=['شخصی','دیوان (کار)','ایده‌ها','خرید','سفر'];
+const CATC={'شخصی':'#d9b45b','دیوان (کار)':'#7ea3e0','ایده‌ها':'#c08ae0','خرید':'#7fc8a9','سفر':'#e09a7a'};
+const LOGO=`<svg width="110" height="60" viewBox="0 0 120 60" fill="none" stroke="#d9b45b" stroke-width="3.5" stroke-linecap="round"><circle cx="60" cy="22" r="12"/><circle cx="60" cy="22" r="5" fill="#d9b45b" stroke="none"/><path d="M46 20 C34 10 20 10 8 18 C22 16 34 20 45 26"/><path d="M74 20 C86 10 100 10 112 18 C98 16 86 20 75 26"/><path d="M60 34 L60 52"/><path d="M50 34 L44 50"/><path d="M70 34 L76 50"/></svg>`;
+
+// مهاجرت از نگارش ۱
+let S=(()=>{const raw=localStorage.getItem('luh_v2');if(raw)return JSON.parse(raw);
+  const old=localStorage.getItem('luh_v1');const o=old?JSON.parse(old):{notes:[]};
+  return{notes:o.notes||[],pin:null}})();
+
+let cur=null,Q='',curCat='همه';
+const $=s=>document.querySelector(s);
+const esc=t=>(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fa=x=>(''+x).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const hash=s=>{let h=5381;for(const c of s)h=((h*33)^c.codePointAt(0))>>>0;return h.toString(36)};
+const save=()=>localStorage.setItem('luh_v2',JSON.stringify(S));
+const faDate=ts=>new Intl.DateTimeFormat('fa-IR',{day:'numeric',month:'long',year:'numeric'}).format(ts);
+
+function render(){
+  $('#count').textContent=S.notes.length?fa(S.notes.length)+' لوح در گنجینه است':'گنجینه خالی است';
+  let list=S.notes.filter(n=>curCat==='همه'||n.cat===curCat);
+  if(Q)list=list.filter(n=>(n.title+' '+n.body+' '+((n.items||[]).map(i=>i.t).join(' '))).includes(Q));
+  list.sort((a,b)=>b.updatedAt-a.updatedAt);
+  const pins=list.filter(n=>n.pin),rest=list.filter(n=>!n.pin),L=$('#list');
+  if(!S.notes.length){L.innerHTML=`<div class="empty">${LOGO}<b>هنوز لوحی ننگاشته‌ای</b><div class="es2">نخستین لوحت را با دکمهٔ زرین پایین بیافرین</div></div>`;return;}
+  if(!list.length){L.innerHTML=`<div class="empty"><b>چیزی یافت نشد</b><div class="es2">شاید در گنجینهٔ دیگری بجوی</div></div>`;return;}
+  let h='';
+  if(pins.length)h+=`<div class="sec">✦ نشان‌های زرین</div><div class="grid">${pins.map(card).join('')}</div>`;
+  if(rest.length)h+=`<div class="sec">✦ لوح‌ها</div><div class="grid">${rest.map(card).join('')}</div>`;
+  L.innerHTML=h;
+}
+const card=n=>{
+  const t=n.title.trim();let mid='';
+  if(n.type==='list'){
+    const tot=(n.items||[]).length,dn=(n.items||[]).filter(i=>i.d).length;
+    mid=`<div class="pg"><i style="width:${tot?Math.round(dn/tot*100):0}%"></i></div>
+         <div class="cs">☑ ${fa(dn)} از ${fa(tot)} بنچک انجام شد</div>`;
+  }else if(n.body.trim()){mid=`<div class="cs">${esc(n.body.replace(/\s+/g,' ').trim().slice(0,90))}</div>`;}
+  return `<div class="card ${n.pin?'pinned':''}" onclick="openEditor('${n.id}')">
+    <div class="ct">${n.pin?'<span class="star">★</span>':''}${t?esc(t):'<span style="color:var(--dim)">بی‌نام</span>'}</div>
+    ${mid}
+    <div class="cf"><span class="tag" style="color:${CATC[n.cat]||'var(--gold)'};border-color:${CATC[n.cat]||'var(--line)'}">${esc(n.cat)}</span><span class="dt">${faDate(n.updatedAt)}</span></div>
+  </div>`;
+};
+function chips(){
+  $('#chips').innerHTML=['همه',...CATS].map(x=>`<button class="chip ${curCat===x?'on':''}" onclick="setCat('${x}')">${x}</button>`).join('');
+}
+function setCat(x){curCat=x;chips();render();}
+
+function openEditor(id){
+  cur=id?S.notes.find(n=>n.id===id):{id:''+Date.now()+Math.floor(Math.random()*99),title:'',body:'',items:[],type:'text',cat:CATS[0],pin:false,createdAt:Date.now(),updatedAt:Date.now()};
+  if(!id){S.notes.unshift(cur);save();}
+  $('#et').value=cur.title;$('#eb').value=cur.body;$('#ec').value=cur.cat;
+  $('#epin').classList.toggle('on',cur.pin);
+  syncEditor();renderItems();
+  $('#editor').classList.add('open');
+  if(!id)setTimeout(()=>$('#et').focus(),300);
+}
+function syncEditor(){
+  const isL=cur.type==='list';
+  $('#eb').style.display=isL?'none':'block';
+  $('#items').style.display=isL?'block':'none';
+  $('#addIt').style.display=isL?'inline-flex':'none';
+  $('#tabT').classList.toggle('on',!isL);$('#tabL').classList.toggle('on',isL);
+}
+function setType(t){
+  if(cur.type===t)return;
+  if(t==='list'){cur.items=(cur.body||'').split('\n').map(x=>x.trim()).filter(x=>x).map(x=>({t:x,d:false}));if(!cur.items.length)cur.items=[{t:'',d:false}];}
+  else{cur.body=(cur.items||[]).map(i=>(i.d?'☑ ':'☐ ')+i.t).join('\n');$('#eb').value=cur.body;}
+  cur.type=t;cur.updatedAt=Date.now();save();syncEditor();renderItems();
+}
+function renderItems(){
+  $('#items').innerHTML=(cur.items||[]).map((it,i)=>`<div class="irow">
+    <button class="ick ${it.d?'on':''}" onclick="tick(${i})">${it.d?'✓':''}</button>
+    <input value="${esc(it.t)}" placeholder="کاری که باید…" oninput="setItem(${i},this.value)">
+    <button class="idx" onclick="delItem(${i})">✕</button></div>`).join('');
+}
+function addItem(){cur.items.push({t:'',d:false});save();renderItems();
+  const inp=$('#items').querySelector('.irow:last-child input');if(inp)inp.focus();}
+function tick(i){cur.items[i].d=!cur.items[i].d;cur.updatedAt=Date.now();save();renderItems();
+  clearTimeout(window._t);window._t=setTimeout(render,300);}
+function setItem(i,v){cur.items[i].t=v;cur.updatedAt=Date.now();save();
+  clearTimeout(window._t);window._t=setTimeout(render,600);}
+function delItem(i){cur.items.splice(i,1);save();renderItems();render();}
+function edInput(){
+  cur.title=$('#et').value;cur.body=$('#eb').value;cur.cat=$('#ec').value;cur.updatedAt=Date.now();save();
+  clearTimeout(window._t);window._t=setTimeout(render,500);
+}
+function closeEditor(){
+  const empty=!cur.title.trim()&&(cur.type==='list'?!cur.items.some(i=>i.t.trim()):!cur.body.trim());
+  if(empty)S.notes=S.notes.filter(n=>n.id!==cur.id);
+  save();$('#editor').classList.remove('open');render();
+  if(!empty)toast('لوح ثبت شد');
+}
+function togglePin(){cur.pin=!cur.pin;$('#epin').classList.toggle('on',cur.pin);save();toast(cur.pin?'نشانِ زرین نشست':'نشان برداشته شد');}
+function askDel(){$('#modal').classList.add('open');}
+function doDel(){
+  S.notes=S.notes.filter(n=>n.id!==cur.id);save();
+  $('#modal').classList.remove('open');$('#editor').classList.remove('open');render();toast('لوح به باد سپرده شد');
+}
+
+/* ---- دژِ گنجینه ---- */
+function openSet(){$('#set').classList.add('open');renderSet();}
+function renderSet(){
+  $('#pinArea').innerHTML=S.pin
+   ?`<div class="okline">✅ قفلی بر گنجینه نهاده شده است</div><div class="mrow"><button class="btn-no" onclick="clearPin()">برداشتنِ قفل</button></div>`
+   :`<div class="note2">چهار رقم به‌عنوان کلید بگذار (فقط روی همین گوشی):</div>
+     <input id="pinNew" class="pinIn" type="password" inputmode="numeric" maxlength="4">
+     <div class="mrow" style="margin-top:12px"><button class="btn-yes" onclick="setPin()">نهادنِ قفل</button></div>`;
+}
+function setPin(){const v=$('#pinNew').value.trim();
+  if(v.length<4){toast('چهار رقم لازم است');return}
+  S.pin=hash(v);save();renderSet();toast('قفل نهاده شد');}
+function clearPin(){S.pin=null;save();renderSet();toast('قفل برداشته شد');}
+function initLock(){$('#lock').style.display=S.pin?'flex':'none';
+  if(S.pin)setTimeout(()=>$('#pinIn').focus(),200);}
+function tryPin(){
+  if(hash($('#pinIn').value.trim())===S.pin){$('#lock').style.display='none';$('#pinIn').value='';toast('گنجینه گشوده شد');}
+  else{toast('کلید نادرست است');$('#pinIn').value='';
+    const l=$('#lock');l.classList.add('shake');setTimeout(()=>l.classList.remove('shake'),380);}
+}
+function doExport(){
+  const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ganzineh-luh.json';a.click();
+  toast('گنجینه برون سپرده شد');
+}
+function doImport(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.notes)throw 0;
+    const ids=new Set(S.notes.map(n=>n.id));let c=0;
+    d.notes.forEach(n=>{if(!ids.has(n.id)){S.notes.push(n);c++;}});
+    save();render();toast(c?fa(c)+' لوح تازه به گنجینه رسید':'گنجینه پیش‌تر همین لوح‌ها را داشت');
+  }catch(e){toast('این پشتیبان خوانا نبود')}};
+  r.readAsText(f);inp.value='';
+}
+
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1600);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#set').classList.remove('open');
+  if(!$('#modal').classList.contains('open')&&$('#editor').classList.contains('open'))closeEditor();}});
+
+// راه‌اندازی
+ $('#ec').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
+const h=new Date().getHours();
+ $('#greet').textContent=h<5?'شب‌زنده‌داری خوش، ای هوشمند':h<12?'درود بر تو، صبحت پرنور':h<17?'درود بر تو، ای هوشمند':h<20?'عصرت بخیر':'شبت آرام، ای هوشمند';
+ $('#date').textContent=new Intl.DateTimeFormat('fa-IR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+chips();render();initLock();
+if('serviceWorker' in navigator&&/^https/.test(location.protocol)){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+</script>
+</body>
+</html>
